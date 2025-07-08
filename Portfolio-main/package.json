@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://Sachinthana25.github.io/Portfolio",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
