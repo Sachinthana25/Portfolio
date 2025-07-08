@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy Portfolio to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger when pushing to the main branch
 
 jobs:
   build-deploy:
@@ -11,12 +11,13 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./  # 👈 change this if your project is in a subfolder
+        working-directory: ./Portfolio-main  # 👈 This is the folder with package.json
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -24,11 +25,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
+      - name: Build the site
         run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build  # 👈 make sure this matches your build output
+          publish_dir: ./Portfolio-main/build  # 👈 This is the full path to your build output
