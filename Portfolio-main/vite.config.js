@@ -1,3 +1,6 @@
+import { webcrypto as crypto } from 'node:crypto'
+globalThis.crypto = crypto
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
