@@ -9,6 +9,8 @@ const Contact = () => {
     subject: '',
     message: ''
   })
+  const [status, setStatus] = useState('idle') // idle | submitting | success | error
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleChange = (e) => {
     setFormData({
@@ -17,12 +19,28 @@ const Contact = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' })
+    setStatus('submitting')
+    setErrorMessage('')
+    try {
+      // Replace the URL below with your backend endpoint or Formspree/EmailJS endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (response.ok) {
+        setStatus('success')
+        setFormData({ name: '', email: '', subject: '', message: '' })
+      } else {
+        setStatus('error')
+        setErrorMessage('Failed to send message. Please try again later.')
+      }
+    } catch (error) {
+      setStatus('error')
+      setErrorMessage('An error occurred. Please try again later.')
+    }
   }
 
   const contactInfo = [
@@ -36,78 +54,40 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Phone',
-      value: '+94 (76) 057 9897',
-      href: 'tel:+94760579897',
+      value: '+94 74 123 4567',
+      href: 'tel:+94741234567',
       color: 'from-green-500 to-green-600'
     },
     {
       icon: MapPin,
       title: 'Location',
-      value: 'SLIIT, Colombo, Sri Lanka',
-      href: '#',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      icon: TestTube,
-      title: 'Development Services',
-      value: 'Testing & Quality Assurance',
-      href: '#',
-      color: 'from-orange-500 to-orange-600'
+      value: 'Colombo, Sri Lanka',
+      href: 'https://goo.gl/maps/xxx',
+      color: 'from-pink-500 to-pink-600'
     }
   ]
 
-  const socialLinks = [
-    { icon: Github, href: 'https://github.com/Sachinthana25', label: 'GitHub', color: 'hover:text-gray-300' },
-    { icon: Linkedin, href: 'https://www.linkedin.com/in/sameedi-godakanda-1b9902209/', label: 'LinkedIn', color: 'hover:text-blue-400' },
-    { icon: MessageCircle, href: 'https://wa.me/94760579897', label: 'WhatsApp', color: 'hover:text-green-400' }
-  ]
-
   return (
-    <section id="contact" className="py-20 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 60,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1.2, 1, 1.2],
-          }}
-          transition={{
-            duration: 45,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"
-        />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+    <section id="contact" className="py-24 bg-slate-900 min-h-screen">
+      <div className="container mx-auto px-6">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-4xl md:text-5xl font-bold text-white mb-8 text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Get In Touch
-          </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mx-auto mb-8"></div>
-          <p className="text-gray-300 max-w-3xl mx-auto text-lg">
-            I'm always open to discussing new opportunities, development projects, or just having a chat about technology and software development.
-          </p>
-        </motion.div>
+          Contact Me
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="text-lg text-gray-400 mb-16 text-center max-w-2xl mx-auto"
+        >
+          Want to connect or discuss a project? Fill out the form or use the contact details below.
+        </motion.p>
 
         <div className="grid lg:grid-cols-5 gap-12">
           {/* Contact Information */}
@@ -125,49 +105,24 @@ const Contact = () => {
               <p className="text-gray-300 mb-8 leading-relaxed">
                 Ready to ensure your software meets the highest quality standards? I'd love to hear about your testing needs and how I can help deliver exceptional user experiences.
               </p>
-              
               <div className="space-y-6">
-                {contactInfo.map(({ icon: Icon, title, value, href, color }, index) => (
-                  <motion.a
+                {contactInfo.map(({ icon: Icon, title, value, href, color }) => (
+                  <a
                     key={title}
                     href={href}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    className="flex items-center space-x-4 p-4 bg-slate-700/30 rounded-xl border border-slate-600/50 hover:border-blue-500/50 transition-all duration-300 group"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center gap-4 group`}
                   >
-                    <div className={`bg-gradient-to-r ${color} p-3 rounded-lg group-hover:shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300`}>
-                      <Icon className="text-white" size={24} />
-                    </div>
+                    <span className={`bg-gradient-to-r ${color} p-3 rounded-lg`}>
+                      <Icon size={28} className="text-white" />
+                    </span>
                     <div>
-                      <h4 className="text-white font-semibold">{title}</h4>
-                      <p className="text-gray-300">{value}</p>
+                      <div className="text-gray-300 text-sm">{title}</div>
+                      <div className="font-semibold text-white group-hover:underline">{value}</div>
                     </div>
-                  </motion.a>
+                  </a>
                 ))}
-              </div>
-
-              {/* Social Links */}
-              <div className="mt-8 pt-8 border-t border-slate-700/50">
-                <h4 className="text-white font-semibold mb-4">Follow Me</h4>
-                <div className="flex space-x-4">
-                  {socialLinks.map(({ icon: Icon, href, label, color }) => (
-                    <motion.a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.2, rotate: 5 }}
-                      whileTap={{ scale: 0.9 }}
-                      className={`text-gray-400 ${color} transition-all duration-300 p-3 rounded-full bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/50 hover:border-blue-500/50`}
-                      aria-label={label}
-                    >
-                      <Icon size={20} />
-                    </motion.a>
-                  ))}
-                </div>
               </div>
             </div>
           </motion.div>
@@ -227,7 +182,6 @@ const Contact = () => {
                     />
                   </motion.div>
                 </div>
-                
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -248,7 +202,6 @@ const Contact = () => {
                     placeholder="What's this about?"
                   />
                 </motion.div>
-                
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -269,7 +222,6 @@ const Contact = () => {
                     placeholder="Tell me about your project or testing needs..."
                   />
                 </motion.div>
-                
                 <motion.button
                   type="submit"
                   initial={{ opacity: 0, y: 20 }}
@@ -279,10 +231,23 @@ const Contact = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center space-x-2"
+                  disabled={status === 'submitting'}
                 >
                   <Send size={20} />
-                  <span>Send Message</span>
+                  <span>
+                    {status === 'submitting' ? 'Sending...' : 'Send Message'}
+                  </span>
                 </motion.button>
+                {status === 'success' && (
+                  <div className="text-green-400 mt-4 text-center font-semibold">
+                    Message sent successfully!
+                  </div>
+                )}
+                {status === 'error' && (
+                  <div className="text-red-400 mt-4 text-center font-semibold">
+                    {errorMessage}
+                  </div>
+                )}
               </form>
             </div>
           </motion.div>
@@ -297,7 +262,6 @@ const Contact = () => {
           className="text-center mt-16"
         >
           <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 p-8 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
-            
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
               I'm a dedicated IT student at SLIIT looking for internship opportunities to apply my skills and contribute to innovative projects.
             </p>
