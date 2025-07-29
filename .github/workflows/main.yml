@@ -3,15 +3,11 @@ name: Deploy Portfolio to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger when pushing to the main branch
+      - main
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./Portfolio-main  # 👈 This is the folder with package.json
 
     steps:
       - name: Checkout code
@@ -32,4 +28,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Portfolio-main/build  # 👈 This is the full path to your build output
+          publish_dir: ./build
